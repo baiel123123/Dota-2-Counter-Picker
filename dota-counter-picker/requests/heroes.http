@@ -1,0 +1,12 @@
+### Добавление нового героя
+POST http://localhost:8080/api/heroes
+Content-Type: application/json
+
+{
+  "name": "Anti-Mage",
+  "attribute": "Agility",
+  "role": "Carry"
+}
+
+### Получение всех героев (для проверки)
+GET http://localhost:8080/api/heroes
