@@ -1,21 +1,25 @@
 package com.dotacp.counterpicker;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/heroes")
 public class HeroController {
-        private final HeroRepository heroRepository;
+        private final HeroService heroService;
 
-        public HeroController(HeroRepository heroRepository) {
-                this.heroRepository = heroRepository;
+        public HeroController(HeroService heroService) {
+                this.heroService = heroService;
         }
+
         @GetMapping
         public List<Hero> getHeroes() {
-                return heroRepository.findAll(); 
+                return heroService.getAllHeroes();
+        }
+
+        @PostMapping
+        public Hero createHero(@RequestBody Hero hero) {
+                return heroService.createHero(hero);
         }
 }
