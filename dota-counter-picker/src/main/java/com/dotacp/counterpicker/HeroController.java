@@ -22,4 +22,13 @@ public class HeroController {
         public Hero createHero(@RequestBody Hero hero) {
                 return heroService.createHero(hero);
         }
+
+        @GetMapping
+        public Hero getHeroById(Long id) {
+                return heroService.getHeroById(id);
+        }
+
+        public Hero updateHero(Long id) {
+
+        }
 }

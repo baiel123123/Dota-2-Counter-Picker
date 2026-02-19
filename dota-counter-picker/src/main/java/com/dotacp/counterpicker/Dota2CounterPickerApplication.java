@@ -15,7 +15,6 @@ public class Dota2CounterPickerApplication {
 	@Bean
 	public CommandLineRunner demo(HeroRepository repository) {
 		return (args) -> {
-			// Если в базе пусто, добавим твоих героев
 			if (repository.count() == 0) {
 				repository.save(new Hero(null, "Terrorblade", "Agility", "Carry"));
 				repository.save(new Hero(null, "Kez", "Agility", "Carry"));

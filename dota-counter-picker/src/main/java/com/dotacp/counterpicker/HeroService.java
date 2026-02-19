@@ -19,7 +19,37 @@ public class HeroService {
         return heroRepository.findAll();
     }
 
-    public Hero createHero(@RequestBody Hero hero) {
+    public Hero createHero(Hero hero) {
+        String upperName = hero.getName().toUpperCase();
+        hero.setName(upperName);
+
         return heroRepository.save(hero);
+    }
+
+    public Hero getHeroById(Long id) {
+        return heroRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Герой с ID " + id + " не найден"));
+    }
+
+    public Hero updateHero(Long id, Hero newHeroData) {
+        Hero existingHero = getHeroById(id);
+
+        if (newHeroData.getName() != null) {
+            existingHero.setName(newHeroData.getName().toUpperCase());
+        }
+
+        if (newHeroData.getAttribute() != null) {
+            existingHero.setAttribute(newHeroData.getAttribute());
+        }
+
+        if (newHeroData.getRole() != null) {
+            existingHero.setRole(newHeroData.getRole());
+        }
+
+        return heroRepository.save(existingHero);
+    }
+
+    public void deleteHero(Long id) {
+        heroRepository.deleteById(id);
     }
 }
