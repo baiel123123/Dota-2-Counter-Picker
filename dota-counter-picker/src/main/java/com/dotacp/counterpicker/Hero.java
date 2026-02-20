@@ -1,15 +1,11 @@
 package com.dotacp.counterpicker;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
+import lombok.*;
 
 @Entity // Говорит Spring, что это таблица в БД
 @Table(name = "heroes") // Название таблицы
-@Getter // Генерирует геттеры (Lombok)
-@Setter // Генерирует сеттеры (Lombok)
+@Data
 @NoArgsConstructor // Пустой конструктор (нужен для JPA)
 @AllArgsConstructor // Конструктор со всеми полями
 public class Hero {
