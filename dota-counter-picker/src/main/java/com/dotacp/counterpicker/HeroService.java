@@ -1,9 +1,8 @@
 package com.dotacp.counterpicker;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,6 +18,10 @@ public class HeroService {
         return heroRepository.findAll();
     }
 
+    public List<Hero> getHeroesByAttribute(String attribute) {
+        return heroRepository.findAllByAttribute(attribute);
+    }
+
     public Hero createHero(Hero hero) {
         String upperName = hero.getName().toUpperCase();
         hero.setName(upperName);
@@ -28,7 +31,10 @@ public class HeroService {
 
     public Hero getHeroById(Long id) {
         return heroRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Герой с ID " + id + " не найден"));
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Герой с ID " + id + " не найден!"
+                ));
     }
 
     public Hero updateHero(Long id, Hero newHeroData) {
@@ -50,6 +56,7 @@ public class HeroService {
     }
 
     public void deleteHero(Long id) {
-        heroRepository.deleteById(id);
+        Hero hero = getHeroById(id);
+        heroRepository.delete(hero);
     }
 }

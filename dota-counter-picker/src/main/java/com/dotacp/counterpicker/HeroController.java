@@ -18,17 +18,25 @@ public class HeroController {
                 return heroService.getAllHeroes();
         }
 
+        @GetMapping("/attribute/{attribute}")
+        public List<Hero> getHeroesByAttribute(@PathVariable String attribute) {
+                return heroService.getHeroesByAttribute(attribute);
+        }
+
         @PostMapping
         public Hero createHero(@RequestBody Hero hero) {
                 return heroService.createHero(hero);
         }
 
-        @GetMapping
-        public Hero getHeroById(Long id) {
+        @GetMapping("/{id}")
+        public Hero getHeroById(@PathVariable Long id) {
                 return heroService.getHeroById(id);
         }
 
-        public Hero updateHero(Long id) {
-
+        @PutMapping("/{id}")
+        public Hero updateHero(@PathVariable Long id, @RequestBody Hero heroDetails) {
+                return heroService.updateHero(id, heroDetails);
         }
+
+
 }
