@@ -1,4 +1,4 @@
-package com.dotacp.counterpicker;
+package com.dotacp.counterpicker.domain;
 
 import jakarta.persistence.*;
 import lombok.*;

@@ -1,5 +1,7 @@
-package com.dotacp.counterpicker;
+package com.dotacp.counterpicker.application;
 
+import com.dotacp.counterpicker.domain.Hero;
+import com.dotacp.counterpicker.infrastructure.HeroRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
