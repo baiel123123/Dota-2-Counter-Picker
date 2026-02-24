@@ -1,5 +1,7 @@
 package com.dotacp.counterpicker;
 
+import com.dotacp.counterpicker.domain.Hero;
+import com.dotacp.counterpicker.infrastructure.HeroRepository;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.CommandLineRunner;
