@@ -1,7 +1,6 @@
 package com.dotacp.counterpicker.application;
 
 import jakarta.annotation.PostConstruct;
-import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
@@ -11,48 +10,14 @@ import java.util.*;
 public class MatchupService {
 
     private final RestClient restClient;
-    // Наш пустой словарь
+
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
+    private final Map<Long, List> heroRoleByIdMap = new HashMap<>();
 
-    public MatchupService() {
-        this.restClient = RestClient.builder()
-                .baseUrl("https://api.opendota.com/api")
-                .build();
-    }
 
-    @Data
-    public static class OpenDotaHero {
-        private Long id;
-        private String localized_name;
-    }
 
-    @Data
-    public static class OpenDotaMatchup {
-        private Long hero_id;
-        private Integer games_played;
-        private Integer wins;
-    }
-
-    @PostConstruct
-    public void initHeroMap() {
-        System.out.println("Начинаем загрузку героев из OpenDota...");
-
-        OpenDotaHero[] heroes = restClient.get()
-                .uri("/heroes")
-                .retrieve()
-                .body(OpenDotaHero[].class);
-
-        if (heroes != null) {
-            for (OpenDotaHero hero : heroes) {
-                heroIdMap.put(hero.getLocalized_name().toLowerCase(), hero.getId());
-                heroNameByIdMap.put(hero.getId(), hero.getLocalized_name());
-            }
-            System.out.println("Успех! Загружено героев в память: " + heroIdMap.size());
-        }
-    }
-
-    public List<CounterHeroDTO> getTopCounters(String heroName) {
+    public List<CounterHeroDTO> getTopCounters(String heroName, String role) {
         List<CounterHeroDTO> counters = new ArrayList<>();
 
         Long heroId = heroIdMap.get(heroName.toLowerCase());
@@ -80,18 +45,20 @@ public class MatchupService {
                 double winrate = Math.round(adjustedWinrate * 100.0) / 100.0;
 
                 String enemyName = heroNameByIdMap.get(odData.getHero_id());
+                List enemyRoles = heroRoleByIdMap.get(odData.getHero_id());
 
                 counters.add(new CounterHeroDTO(
                         "Враг с ID: " + odData.getHero_id(),
                         "Герой " + enemyName,
-                        "General",
+                        "Роль: " + enemyRoles,
                         winrate,
-                        odData.getGames_played()
+                        odData  .getGames_played()
                 ));
             }
         }
 
         return counters.stream()
+                .filter(dto -> role == null || dto.getRole().toLowerCase().contains(role.toLowerCase()))
                 .sorted(Comparator.comparing(CounterHeroDTO::getWinrate).reversed())
                 .toList();
     }
