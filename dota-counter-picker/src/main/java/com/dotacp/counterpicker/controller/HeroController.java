@@ -1,4 +1,4 @@
-package com.dotacp.counterpicker.infrastructure;
+package com.dotacp.counterpicker.controller;
 
 import com.dotacp.counterpicker.domain.Hero;
 import com.dotacp.counterpicker.application.CounterHeroDTO;
@@ -42,8 +42,16 @@ public class HeroController {
                 return heroService.updateHero(id, heroDetails);
         }
 
-        @GetMapping("/{name}/counters")
-        public List<CounterHeroDTO> getCounters(@PathVariable String name) {
-                return matchupService.getTopCounters(name);
+        @GetMapping("/{name}/mathups")
+        public List<CounterHeroDTO> getCounters(
+                @PathVariable String name,
+                @RequestParam(required = false, defaultValue = "") String role
+        ) {
+                return matchupService.getTopCounters(name, role);
+        }
+
+        @GetMapping("/heroes_opendota")
+        public List<MatchupService.OpenDotaHero> get_heroes() {
+                return matchupService.get_Heroes();
         }
 }
