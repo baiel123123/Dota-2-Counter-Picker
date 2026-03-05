@@ -4,9 +4,7 @@ import lombok.Data;
 
 @Data
 public class OpenDotaMatchup {
-    public class OpenDotaMatchup {
-        private Long hero_id;
-        private Integer games_played;
-        private Integer wins;
-    }
+    private Long hero_id;
+    private Integer games_played;
+    private Integer wins;
 }

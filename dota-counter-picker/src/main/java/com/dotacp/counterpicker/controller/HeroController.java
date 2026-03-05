@@ -4,6 +4,7 @@ import com.dotacp.counterpicker.domain.Hero;
 import com.dotacp.counterpicker.application.CounterHeroDTO;
 import com.dotacp.counterpicker.application.HeroService;
 import com.dotacp.counterpicker.application.MatchupService;
+import com.dotacp.counterpicker.infrastructure.OpenDotaHero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,7 +52,7 @@ public class HeroController {
         }
 
         @GetMapping("/heroes_opendota")
-        public List<MatchupService.OpenDotaHero> get_heroes() {
+        public List<OpenDotaHero> get_heroes() {
                 return matchupService.get_Heroes();
         }
 }

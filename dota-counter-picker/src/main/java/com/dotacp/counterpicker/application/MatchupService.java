@@ -1,21 +1,51 @@
 package com.dotacp.counterpicker.application;
 
+import com.dotacp.counterpicker.infrastructure.OpenDotaClient;
+import com.dotacp.counterpicker.infrastructure.OpenDotaHero;
+import com.dotacp.counterpicker.infrastructure.OpenDotaMatchup;
 import jakarta.annotation.PostConstruct;
+
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
 
 import java.util.*;
 
 @Service
 public class MatchupService {
-
-    private final RestClient restClient;
+    private final OpenDotaClient openDotaClient;
 
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
     private final Map<Long, List> heroRoleByIdMap = new HashMap<>();
 
+    public MatchupService(OpenDotaClient openDotaClient) {
+        this.openDotaClient = openDotaClient;
+    }
 
+    @PostConstruct
+    public void initHeroMap() {
+        System.out.println("Начинаем загрузку героев из OpenDota...");
+
+        OpenDotaHero[] heroes = openDotaClient.fetchAllHeroes();
+
+        if (heroes != null) {
+            for (OpenDotaHero hero : heroes) {
+                heroIdMap.put(hero.getLocalized_name().toLowerCase(), hero.getId());
+                heroNameByIdMap.put(hero.getId(), hero.getLocalized_name());
+                heroRoleByIdMap.put(hero.getId(), hero.getRoles());
+            }
+            System.out.println("Успех! Загружено героев в память: " + heroIdMap.size());
+        }
+    }
+
+    public List<OpenDotaHero> get_Heroes() {
+        OpenDotaHero[] heroes = openDotaClient.fetchAllHeroes();
+
+        if (heroes == null) {
+            return List.of();
+        }
+
+        return Arrays.asList(heroes);
+    }
 
     public List<CounterHeroDTO> getTopCounters(String heroName, String role) {
         List<CounterHeroDTO> counters = new ArrayList<>();
@@ -26,10 +56,7 @@ public class MatchupService {
             throw new RuntimeException("Герой " + heroName + " не найден в OpenDota!");
         }
 
-        OpenDotaMatchup[] response = restClient.get()
-                .uri("/heroes/" + heroId + "/matchups")
-                .retrieve()
-                .body(OpenDotaMatchup[].class);
+        OpenDotaMatchup[] response = openDotaClient.fetchMatchups(heroId);
 
         if (response != null) {
             for (int i = 0; i < response.length; i++) {
