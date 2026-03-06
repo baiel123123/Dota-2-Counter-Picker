@@ -15,6 +15,6 @@ public class Hero {
     private Long id;
 
     private String name;
-    private String attribute; // Strength, Agility, Intelligence, Universal
-    private String role;      // Carry, Mid, Offlane, Support
+    private String attribute;
+    private String role;
 }

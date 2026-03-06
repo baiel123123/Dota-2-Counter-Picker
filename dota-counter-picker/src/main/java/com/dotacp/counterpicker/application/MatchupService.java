@@ -1,8 +1,6 @@
 package com.dotacp.counterpicker.application;
 
-import com.dotacp.counterpicker.infrastructure.OpenDotaClient;
-import com.dotacp.counterpicker.infrastructure.OpenDotaHero;
-import com.dotacp.counterpicker.infrastructure.OpenDotaMatchup;
+import com.dotacp.counterpicker.infrastructure.*;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
@@ -12,29 +10,48 @@ import java.util.*;
 @Service
 public class MatchupService {
     private final OpenDotaClient openDotaClient;
+    private final OpenDotaHeroRepository openDotaHeroRepository;
 
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
     private final Map<Long, List> heroRoleByIdMap = new HashMap<>();
 
-    public MatchupService(OpenDotaClient openDotaClient) {
+    public MatchupService(OpenDotaClient openDotaClient, OpenDotaHeroRepository openDotaHeroRepository) {
         this.openDotaClient = openDotaClient;
+        this.openDotaHeroRepository = openDotaHeroRepository;
     }
 
     @PostConstruct
     public void initHeroMap() {
-        System.out.println("Начинаем загрузку героев из OpenDota...");
+        System.out.println("Шаг 1: Проверка базы данных...");
+        if (openDotaHeroRepository.count() == 0) {
+            System.out.println("База пуста! Качаем из OpenDota...");
+            OpenDotaHero[] dotaHeroes = openDotaClient.fetchAllHeroes();
 
-        OpenDotaHero[] heroes = openDotaClient.fetchAllHeroes();
+            if (dotaHeroes != null) {
+                for (OpenDotaHero dotaHero : dotaHeroes) {
+                    OpenDotaHero hero = new OpenDotaHero();
+                    OpenDotaHero.setId(dotaHero.getId());
+                    OpenDotaHero.setName(dotaHero.getName());
+                    OpenDotaHero.setLocalizedName(dotaHero.getLocalized_name());
+                    OpenDotaHero.setRoles(dotaHero.getRoles()); // Save roles!
 
-        if (heroes != null) {
-            for (OpenDotaHero hero : heroes) {
-                heroIdMap.put(hero.getLocalized_name().toLowerCase(), hero.getId());
-                heroNameByIdMap.put(hero.getId(), hero.getLocalized_name());
-                heroRoleByIdMap.put(hero.getId(), hero.getRoles());
+                    OpenDotaHeroRepository.save(hero);
+                }
             }
-            System.out.println("Успех! Загружено героев в память: " + heroIdMap.size());
         }
+
+        // 2. Load from Database into HashMaps (The Cache)
+        System.out.println("Шаг 2: Загрузка героев из БД в память (Кэш)...");
+        List<Hero> allHeroesFromDb = heroRepository.findAll();
+
+        for (Hero hero : allHeroesFromDb) {
+            heroIdMap.put(hero.getLocalizedName().toLowerCase(), hero.getId());
+            heroNameByIdMap.put(hero.getId(), hero.getLocalizedName());
+            heroRoleByIdMap.put(hero.getId(), hero.getRoles());
+        }
+
+        System.out.println("Успех! Героев в памяти: " + heroIdMap.size());
     }
 
     public List<OpenDotaHero> get_Heroes() {
