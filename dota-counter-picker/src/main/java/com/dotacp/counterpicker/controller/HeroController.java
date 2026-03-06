@@ -1,9 +1,10 @@
-package com.dotacp.counterpicker.infrastructure;
+package com.dotacp.counterpicker.controller;
 
 import com.dotacp.counterpicker.domain.Hero;
 import com.dotacp.counterpicker.application.CounterHeroDTO;
 import com.dotacp.counterpicker.application.HeroService;
 import com.dotacp.counterpicker.application.MatchupService;
+import com.dotacp.counterpicker.infrastructure.OpenDotaHero;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +16,6 @@ import java.util.List;
 public class HeroController {
         private final HeroService heroService;
         private final MatchupService matchupService;
-
 
         @GetMapping
         public List<Hero> getHeroes() {
@@ -37,13 +37,21 @@ public class HeroController {
                 return heroService.getHeroById(id);
         }
 
-        @PutMapping("/{id}")
-        public Hero updateHero(@PathVariable Long id, @RequestBody Hero heroDetails) {
-                return heroService.updateHero(id, heroDetails);
+////        @PutMapping("/{id}")
+////        public Hero updateHero(@PathVariable Long id, @RequestBody Hero heroDetails) {
+////                return heroService.updateHero(id, heroDetails);
+//        }
+
+        @GetMapping("/{name}/mathups")
+        public List<CounterHeroDTO> getCounters(
+                @PathVariable String name,
+                @RequestParam(required = false, defaultValue = "") String role
+        ) {
+                return matchupService.getTopCounters(name, role);
         }
 
-        @GetMapping("/{name}/counters")
-        public List<CounterHeroDTO> getCounters(@PathVariable String name) {
-                return matchupService.getTopCounters(name);
+        @GetMapping("/heroes_opendota")
+        public List<OpenDotaHero> get_heroes() {
+                return matchupService.get_Heroes();
         }
 }

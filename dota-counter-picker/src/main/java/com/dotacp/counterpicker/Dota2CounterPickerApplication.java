@@ -14,18 +14,4 @@ public class Dota2CounterPickerApplication {
 		SpringApplication.run(Dota2CounterPickerApplication.class, args);
 	}
 
-	@Bean
-	public CommandLineRunner demo(HeroRepository repository) {
-		return (args) -> {
-			if (repository.count() == 0) {
-				repository.save(new Hero(null, "Terrorblade", "Agility", "Carry"));
-				repository.save(new Hero(null, "Kez", "Agility", "Carry"));
-				repository.save(new Hero(null, "Faceless Void", "Agility", "Carry"));
-				repository.save(new Hero(null, "Luna", "Agility", "Carry"));
-				repository.save(new Hero(null, "Grimstroke", "Intellect", "Support"));
-
-				System.out.println("Твой пул героев добавлен в базу!");
-			}
-		};
-	}
 }

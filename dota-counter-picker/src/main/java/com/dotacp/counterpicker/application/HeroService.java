@@ -21,7 +21,7 @@ public class HeroService {
     }
 
     public List<Hero> getHeroesByAttribute(String attribute) {
-        return heroRepository.findAllByAttribute(attribute);
+        return heroRepository.findAllByPrimaryAttr(attribute);
     }
 
     public Hero createHero(Hero hero) {
@@ -39,23 +39,23 @@ public class HeroService {
                 ));
     }
 
-    public Hero updateHero(Long id, Hero newHeroData) {
-        Hero existingHero = getHeroById(id);
-
-        if (newHeroData.getName() != null) {
-            existingHero.setName(newHeroData.getName().toUpperCase());
-        }
-
-        if (newHeroData.getAttribute() != null) {
-            existingHero.setAttribute(newHeroData.getAttribute());
-        }
-
-        if (newHeroData.getRole() != null) {
-            existingHero.setRole(newHeroData.getRole());
-        }
-
-        return heroRepository.save(existingHero);
-    }
+//    public Hero updateHero(Long id, Hero newHeroData) {
+//        Hero existingHero = getHeroById(id);
+//
+//        if (newHeroData.getName() != null) {
+//            existingHero.setName(newHeroData.getName().toUpperCase());
+//        }
+//
+//        if (newHeroData.getAttribute() != null) {
+//            existingHero.setAttribute(newHeroData.getAttribute());
+//        }
+//
+//        if (newHeroData.getRole() != null) {
+//            existingHero.setRole(newHeroData.getRole());
+//        }
+//
+//        return heroRepository.save(existingHero);
+//    }
 
     public void deleteHero(Long id) {
         Hero hero = getHeroById(id);
