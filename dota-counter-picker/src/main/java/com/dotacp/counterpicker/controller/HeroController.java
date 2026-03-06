@@ -17,7 +17,6 @@ public class HeroController {
         private final HeroService heroService;
         private final MatchupService matchupService;
 
-
         @GetMapping
         public List<Hero> getHeroes() {
                 return heroService.getAllHeroes();
@@ -38,10 +37,10 @@ public class HeroController {
                 return heroService.getHeroById(id);
         }
 
-        @PutMapping("/{id}")
-        public Hero updateHero(@PathVariable Long id, @RequestBody Hero heroDetails) {
-                return heroService.updateHero(id, heroDetails);
-        }
+////        @PutMapping("/{id}")
+////        public Hero updateHero(@PathVariable Long id, @RequestBody Hero heroDetails) {
+////                return heroService.updateHero(id, heroDetails);
+//        }
 
         @GetMapping("/{name}/mathups")
         public List<CounterHeroDTO> getCounters(

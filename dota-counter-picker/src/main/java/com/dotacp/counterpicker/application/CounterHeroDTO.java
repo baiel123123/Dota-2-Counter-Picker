@@ -5,6 +5,7 @@ import lombok.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+
 public class CounterHeroDTO {
     private String name;
     private String hero_name;

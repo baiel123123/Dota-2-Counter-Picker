@@ -1,5 +1,6 @@
 package com.dotacp.counterpicker.application;
 
+import com.dotacp.counterpicker.domain.Hero;
 import com.dotacp.counterpicker.infrastructure.*;
 import jakarta.annotation.PostConstruct;
 
@@ -10,33 +11,37 @@ import java.util.*;
 @Service
 public class MatchupService {
     private final OpenDotaClient openDotaClient;
-    private final OpenDotaHeroRepository openDotaHeroRepository;
+    private final HeroRepository heroRepository;
 
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
     private final Map<Long, List> heroRoleByIdMap = new HashMap<>();
 
-    public MatchupService(OpenDotaClient openDotaClient, OpenDotaHeroRepository openDotaHeroRepository) {
+    public MatchupService(OpenDotaClient openDotaClient, HeroRepository heroRepository) {
         this.openDotaClient = openDotaClient;
-        this.openDotaHeroRepository = openDotaHeroRepository;
+        this.heroRepository = heroRepository;
     }
 
     @PostConstruct
     public void initHeroMap() {
         System.out.println("Шаг 1: Проверка базы данных...");
-        if (openDotaHeroRepository.count() == 0) {
+        if (heroRepository.count() == 0) {
             System.out.println("База пуста! Качаем из OpenDota...");
             OpenDotaHero[] dotaHeroes = openDotaClient.fetchAllHeroes();
 
             if (dotaHeroes != null) {
                 for (OpenDotaHero dotaHero : dotaHeroes) {
-                    OpenDotaHero hero = new OpenDotaHero();
-                    OpenDotaHero.setId(dotaHero.getId());
-                    OpenDotaHero.setName(dotaHero.getName());
-                    OpenDotaHero.setLocalizedName(dotaHero.getLocalized_name());
-                    OpenDotaHero.setRoles(dotaHero.getRoles()); // Save roles!
+                    Hero hero = new Hero();
 
-                    OpenDotaHeroRepository.save(hero);
+                    hero.setId(dotaHero.getId());
+                    hero.setName(dotaHero.getName());
+                    hero.setLocalizedName(dotaHero.getLocalized_name());
+
+                    hero.setPrimaryAttr(dotaHero.getPrimary_attr());
+                    hero.setAttackType(dotaHero.getAttack_type());
+                    hero.setRoles(dotaHero.getRoles());
+
+                    heroRepository.save(hero);
                 }
             }
         }
@@ -76,9 +81,7 @@ public class MatchupService {
         OpenDotaMatchup[] response = openDotaClient.fetchMatchups(heroId);
 
         if (response != null) {
-            for (int i = 0; i < response.length; i++) {
-                OpenDotaMatchup odData = response[i];
-
+            for (OpenDotaMatchup odData : response) {
                 double totalGames = odData.getGames_played();
                 double enemyWins = totalGames - odData.getWins();
 
@@ -96,7 +99,7 @@ public class MatchupService {
                         "Герой " + enemyName,
                         "Роль: " + enemyRoles,
                         winrate,
-                        odData  .getGames_played()
+                        odData.getGames_played()
                 ));
             }
         }
