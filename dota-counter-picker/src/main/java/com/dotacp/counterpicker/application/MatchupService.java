@@ -1,6 +1,8 @@
 package com.dotacp.counterpicker.application;
 
 import com.dotacp.counterpicker.domain.Hero;
+import com.dotacp.counterpicker.exception.HeroNotFoundException;
+import com.dotacp.counterpicker.exception.InvalidRoleException;
 import com.dotacp.counterpicker.infrastructure.*;
 import jakarta.annotation.PostConstruct;
 
@@ -16,6 +18,11 @@ public class MatchupService {
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
     private final Map<Long, List> heroRoleByIdMap = new HashMap<>();
+
+    private static final Set<String> VALID_ROLES = Set.of(
+            "carry", "support", "nuker", "disabler",
+            "jungler", "durable", "escape", "pusher", "initiator"
+    );
 
     public MatchupService(OpenDotaClient openDotaClient, HeroRepository heroRepository) {
         this.openDotaClient = openDotaClient;
@@ -70,12 +77,16 @@ public class MatchupService {
     }
 
     public List<CounterHeroDTO> getTopCounters(String heroName, String role) {
+        if (role != null && !role.isEmpty() && !VALID_ROLES.contains(role.toLowerCase())) {
+            throw new InvalidRoleException(role);
+        }
+
         List<CounterHeroDTO> counters = new ArrayList<>();
 
         Long heroId = heroIdMap.get(heroName.toLowerCase());
 
         if (heroId == null) {
-            throw new RuntimeException("Герой " + heroName + " не найден в OpenDota!");
+            throw new HeroNotFoundException("Герой " + heroName + " не найден в OpenDota!");
         }
 
         OpenDotaMatchup[] response = openDotaClient.fetchMatchups(heroId);
