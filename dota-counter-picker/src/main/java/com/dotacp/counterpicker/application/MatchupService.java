@@ -53,7 +53,6 @@ public class MatchupService {
             }
         }
 
-        // 2. Load from Database into HashMaps (The Cache)
         System.out.println("Шаг 2: Загрузка героев из БД в память (Кэш)...");
         List<Hero> allHeroesFromDb = heroRepository.findAll();
 
