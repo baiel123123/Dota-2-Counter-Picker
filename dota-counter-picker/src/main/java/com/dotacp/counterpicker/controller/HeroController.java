@@ -1,5 +1,7 @@
 package com.dotacp.counterpicker.controller;
 
+import com.dotacp.counterpicker.application.UserService;
+import com.dotacp.counterpicker.domain.AppUser;
 import com.dotacp.counterpicker.domain.Hero;
 import com.dotacp.counterpicker.application.CounterHeroDTO;
 import com.dotacp.counterpicker.application.HeroService;
@@ -16,6 +18,7 @@ import java.util.List;
 public class HeroController {
         private final HeroService heroService;
         private final MatchupService matchupService;
+        private final UserService userService;
 
         @GetMapping
         public List<Hero> getHeroes() {
@@ -53,5 +56,10 @@ public class HeroController {
         @GetMapping("/heroes_opendota")
         public List<OpenDotaHero> get_heroes() {
                 return matchupService.get_Heroes();
+        }
+
+        @PostMapping("/{user_id}/favotites/{hero_id}")
+        public AppUser add_favorite_hero(@PathVariable("user_id") Long user_id, @PathVariable("hero_id") Long hero_id) {
+                return userService.addFavoriteHero(user_id, hero_id);
         }
 }

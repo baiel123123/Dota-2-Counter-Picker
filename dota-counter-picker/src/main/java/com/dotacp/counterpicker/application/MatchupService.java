@@ -13,7 +13,7 @@ import java.util.*;
 @Service
 public class MatchupService {
     private final OpenDotaClient openDotaClient;
-    private final HeroRepository heroRepository;
+    private final HeroRepository heroRepository;    
 
     private final Map<String, Long> heroIdMap = new HashMap<>();
     private final Map<Long, String> heroNameByIdMap = new HashMap<>();
