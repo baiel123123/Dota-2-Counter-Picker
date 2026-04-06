@@ -23,5 +23,5 @@ public class UserController {
     }
 
     @GetMapping("/get_users")
-    public List<AppUser> getUsers() { return AppUserRepository.}
+    public List<AppUser> getUsers() { return appUserRepository.findAll();}
 }
