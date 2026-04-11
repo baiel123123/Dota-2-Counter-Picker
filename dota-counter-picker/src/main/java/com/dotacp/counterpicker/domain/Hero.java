@@ -2,6 +2,8 @@ package com.dotacp.counterpicker.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import java.util.List;
 
@@ -10,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor // Пустой конструктор (нужен для JPA)
 @AllArgsConstructor // Конструктор со всеми полями
+
 public class Hero {
     @Id
     private Long id;
@@ -23,5 +26,8 @@ public class Hero {
     private String attackType;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "hero_roles", joinColumns = @JoinColumn(name = "hero_id"))
+    @Column(name = "roles")
+    @Fetch(FetchMode.SUBSELECT)
     private List<String> roles;
 }
